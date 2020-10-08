@@ -1,0 +1,53 @@
+{% extends "blog/base.html" %}
+
+{% block content%}
+    <!-- To display all blogs -->
+    {% for post in posts %}
+        <article class="media content-section">
+            <img class="rounded-circle article-img" src="{{ post.author.profile.image.url }}">
+            <div class="media-body">
+                <div class="article-metadata">
+                    <a class="mr-2" href="{% url 'user-posts' post.author.username %}">{{ post.author }}</a>  <!-- model is class Post() and we access it members as post.memeber_name-->
+                    <small class="text-muted">{{ post.date_posted|date:"F d, Y" }}</small>
+                </div>
+                <h2><a class="article-title" href="{% url 'post-detail' post.id %}">{{ post.title }}</a></h2>
+                <p class="article-content">{{ post.content }}</p>
+                <input type="text" id="tag" name="tag" placeholder="Default predicted tag">
+        
+            </div>
+            </article>
+    {% endfor %}
+    
+    <div style="text-align: center;">
+        <!-- To Paginate -->
+        {% if is_paginated %}
+
+            <!-- To display previous page option -->
+            {% if page_obj.has_previous %}
+                <a class="btn btn-outline-info mb-4" href="?page=1">First</a>
+                <a class="btn btn-outline-info mb-4" href="?page={{ page_obj.previous_page_number }}">Previous</a>
+            {% endif %}
+
+            <!-- To display 3 near pages of current page -->
+            {% for num in page_obj.paginator.page_range %}      <!--loop thhrough all pages-->
+                <!--num is the current page we are on-->
+                {% if page_obj.number == num %}  <!-- if current page is object, display it with some other design-->   
+                    <a class="btn btn-info mb-4" href="?page={{ num }}">{{ num }}</a>
+                
+                {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}  <!-- next and previous 3 pages option -->   
+                    <a class="btn btn-outline-info mb-4" href="?page={{ num }}">{{ num }}</a>
+                {% endif %}
+            {% endfor %}
+
+            <!-- To display next page option -->
+            {% if page_obj.has_next %}
+                <a class="btn btn-outline-info mb-4" href="?page={{ page_obj.next_page_number }}">Next</a>
+                <a class="btn btn-outline-info mb-4" href="?page={{ page_obj.paginator.num_pages }}">Last</a>
+            {% endif %}
+
+        {% endif %}
+        </div>
+
+{% endblock content %}
+
+
